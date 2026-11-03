@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><title>PANTAUIN – Sistem Pantau Akademik</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#0b1020;--card:#16203a;--c2:#1e2b4d;--line:#2b3a63;--tx:#eaf0ff;--mut:#8fa0c8;--gold:#f5b83d;--ok:#3ddc97;--bad:#ff6b6b;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 20% 0,#1a2550,#0b1020 60%);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px))}
+.roles{display:flex;gap:4px;margin:4px 0 12px;background:var(--card);padding:4px;border-radius:99px;flex-wrap:wrap;justify-content:center}
+.roles button{border:0;background:none;color:var(--mut);padding:7px 14px;border-radius:99px;font:600 13px inherit;cursor:pointer}
+.roles .on{background:var(--gold);color:#2a1d00}
+.phone{width:100%;max-width:420px;min-height:680px;background:var(--bg);border:1px solid var(--line);border-radius:28px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px #0008}
+.top{padding:15px 20px;text-align:center;font-weight:800;border-bottom:1px solid var(--line);background:var(--card)}
+.top small{display:block;color:var(--mut);font-weight:500;font-size:11px;margin-top:2px}
+.body{flex:1;padding:16px;display:flex;flex-direction:column;gap:11px;overflow:auto}
+.nav{display:flex;border-top:1px solid var(--line);background:var(--card)}
+.nav button{flex:1;border:0;background:none;color:var(--mut);padding:12px 2px;font:600 11px inherit;cursor:pointer}
+.nav .on{color:var(--gold)}
+h2{margin:0;font-size:19px}h3{margin:0;font-size:13px;color:var(--mut);font-weight:600}
+p{margin:0;color:var(--mut);font-size:12.5px;line-height:1.5}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:13px}
+input,select{width:100%;background:var(--c2);border:1px solid var(--line);color:var(--tx);border-radius:11px;padding:11px;font:14px inherit;margin-top:7px}
+.btn{border:0;border-radius:11px;padding:12px;font:700 14px inherit;cursor:pointer;background:var(--gold);color:#2a1d00;width:100%}
+.btn.s{background:var(--c2);color:var(--tx)}.btn.x{background:var(--bad);color:#2a0000}.btn.m{width:auto;padding:8px 13px;font-size:12px}
+.link{color:var(--gold);cursor:pointer;font-size:13px;text-align:center;background:none;border:0;font-family:inherit;padding:4px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:12px;text-align:center}
+.stat b{display:block;font-size:26px;color:var(--gold)}.stat span{font-size:11px;color:var(--mut)}
+.bar{height:8px;border-radius:9px;background:var(--c2);overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ok)}
+.bd{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.ok{background:#3ddc9722;color:var(--ok)}.no{background:#ff6b6b22;color:var(--bad)}.wt{background:#f5b83d22;color:var(--gold)}
+.err{color:var(--bad);font-size:12px;min-height:15px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cen{text-align:center;align-items:center;justify-content:center;flex:1;display:flex;flex-direction:column;gap:10px}
+.mi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px;display:flex;justify-content:space-between;cursor:pointer;color:var(--tx);font:600 14px inherit;width:100%}
+.chips{display:flex;gap:6px;overflow:auto}.chips button{border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:99px;padding:6px 12px;font:600 12px inherit;white-space:nowrap;cursor:pointer}
+.chips .on{background:var(--gold);color:#2a1d00;border-color:var(--gold)}
+.tl{border-left:2px solid var(--line);padding-left:12px;margin-left:5px;display:flex;flex-direction:column;gap:12px}
+.tl>div{position:relative}.tl>div:before{content:"";position:absolute;left:-18px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.hist{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:8px}.hist div{flex:1;background:var(--gold);border-radius:5px 5px 0 0;text-align:center;font-size:10px;color:#2a1d00;font-weight:700;min-height:2px}
+.foot{color:var(--mut);font-size:11px;margin:12px 0 4px;text-align:center;max-width:420px;line-height:1.6}
+
+@media(min-width:900px){
+body{padding:0;display:block}
+.roles{margin:0;border-radius:0;justify-content:flex-end;padding:8px 24px;border-bottom:1px solid var(--line)}
+.phone{max-width:none;width:100%;min-height:calc(100vh - 53px);border:0;border-radius:0;box-shadow:none;display:grid;grid-template-columns:250px 1fr;grid-template-rows:auto 1fr}
+.phone .top{grid-column:1/-1;text-align:left;padding:16px 28px;font-size:18px;display:flex;align-items:baseline;gap:14px}
+.phone .top small{margin:0;font-size:12px}
+.phone .nav{grid-column:1;grid-row:2;flex-direction:column;border-top:0;border-right:1px solid var(--line);padding:14px 10px;gap:4px;align-self:stretch}
+.nav button{text-align:left;padding:13px 16px;font-size:14px;border-radius:11px}
+.nav button:hover{background:var(--c2)}
+.nav .on{background:var(--c2);box-shadow:inset 3px 0 0 var(--gold)}
+.phone .body{grid-column:2;grid-row:2;padding:28px 36px;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;align-content:start;max-width:1200px;width:100%}
+.body>h2,.body>.chips,.body>.err,.body>p,.body>.tl,.body>h3,.body>.row,.body>.link,.body>.btn,.body>select,.body>div:has(>#u){grid-column:1/-1}
+.body>.btn{max-width:260px}
+.body>.stats{grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+h2{font-size:24px}p{font-size:14px}.stat b{font-size:32px}.hist{height:140px}
+.phone.nonav{grid-template-columns:1fr}
+.phone.nonav .nav{display:none}
+.phone.nonav .body{grid-column:1;display:flex;flex-direction:column;max-width:440px;margin:40px auto;justify-content:flex-start}
+.phone.nonav .body>.btn{max-width:none}
+.foot{max-width:none;padding:12px}
+}
+@media(min-width:1500px){.phone .body{max-width:1400px}}
+</style></head><body>
+<div class="roles" id="roles"></div>
+<div class="phone" id="ph"><div class="top">Pantau Akademik<small id="sub"></small></div><div class="body" id="body"></div><div class="nav" id="nav"></div></div>
+<div class="foot">Data tersimpan di Supabase dengan Row Level Security.</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const SB_URL='https://gtdrvolljkpwdtsttugl.supabase.co',SB_KEY='sb_publishable_5qTJV1hjd0y_YSgqQrPbSw_L1nFh36h';
+const CFG=!SB_URL.includes('YOUR-PROJECT'),sb=supabase.createClient(SB_URL,SB_KEY);
+const toEmail=u=>u.includes('@')?u:u.toLowerCase()+'@pantauin.app';
+const loc=iso=>{const d=new Date(iso),z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'T'+z(d.getHours())+':'+z(d.getMinutes())};
+let db={users:[],mhs:{},relasi:[],bim:[],kelas:[],sync:'-'};
+async function loadAll(){
+ const {data:{user}}=await sb.auth.getUser();if(!user){me=null;return}
+ const {data:pf,error:pe}=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();if(!pf){me=null;window.pErr=pe?pe.message:'baris profil tidak ada di tabel profiles';return}
+ const nd={users:[],mhs:{},relasi:[],bim:[],kelas:[],sync:'Belum pernah'},idNim={};
+ me={id:user.id,r:pf.role,name:pf.nama,rel:pf.hubungan||'Orang tua/wali',u:user.id};
+ if(pf.role!=='ortu'){
+  const [m,s2,k,b]=await Promise.all([sb.from('mahasiswa').select('*'),sb.from('ringkasan_semester').select('*').order('semester_no'),sb.from('mata_kuliah_berjalan').select('*').order('id'),sb.from('bimbingan').select('*').order('jadwal')]);
+  (m.data||[]).forEach(x=>{idNim[x.id]=x.nim;nd.mhs[x.nim]={id:x.id,nama:x.nama,pa:x.dosen_pa_id,ke:x.semester_ke,sisaSem:x.sisa_semester,sem:[],mk:[]}});
+  (s2.data||[]).forEach(x=>{const o=nd.mhs[idNim[x.mahasiswa_id]];o&&o.sem.push({ips:+x.ips,sks:x.sks})});
+  (k.data||[]).forEach(x=>{const o=nd.mhs[idNim[x.mahasiswa_id]];o&&o.mk.push({n:x.nama_mk,sks:x.sks,h:x.hadir,t:x.tugas_selesai,tt:x.tugas_total,nilai:+x.nilai})});
+  (b.data||[]).forEach(x=>nd.bim.push({id:x.id,nim:idNim[x.mahasiswa_id],t:loc(x.jadwal),tp:x.topik,st:x.status,cat:x.catatan||''}));
+  if(pf.role==='mhs'&&m.data&&m.data[0])me.u=m.data[0].nim;
+  if(pf.role==='dosen'){const {data}=await sb.from('kelas').select('*').order('id');nd.kelas=(data||[]).map(x=>({n:x.nama,jml:x.jumlah,avg:+x.rata_nilai,h:x.rata_hadir,d:x.dist}))}
+ }
+ if(pf.role!=='dosen'){
+  const {data}=await sb.from('relasi_wali').select('*').order('id');
+  for(const x of data||[]){nd.relasi.push({id:x.id,ortu:x.orang_tua_id,nim:x.nim,st:x.status_persetujuan,nama:x.nama_anak});nd.users.push({u:x.orang_tua_id,name:x.orang_tua_nama,un:x.orang_tua_username});
+   if(pf.role==='ortu'&&x.status_persetujuan==='disetujui'){const {data:r}=await sb.rpc('ringkasan_anak',{p_nim:x.nim});if(r)nd.mhs[x.nim]={nama:r.nama,pa:null,ke:0,sisaSem:0,sem:r.sem.map(t=>({ips:+t.ips,sks:t.sks})),mk:[{n:'agregat',h:+r.hadir}]}}}
+ }
+ const {data:lg}=await sb.from('log_sinkronisasi').select('*').order('waktu',{ascending:false}).limit(1);
+ if(lg&&lg[0])nd.sync=new Date(lg[0].waktu).toLocaleString('id-ID')+' ('+lg[0].status+')';
+ db=nd}
+const startScr=()=>role==='mhs'?'s':role==='dosen'?'list':'home';
+async function init(){if(!CFG){err='Isi SB_URL dan SB_KEY di index.html terlebih dahulu.';return render()}
+ await loadAll();if(me){role=me.r;scr=startScr()}render()}
+let role='mhs',me=null,scr='login',sub='home',sel=null,err='',kel=0,ok='';
+const $=i=>document.getElementById(i),f=n=>n.toFixed(2).replace('.',','),C=2*0+144;
+const ipk=m=>m.sem.reduce((a,s)=>a+s.ips*s.sks,0)/m.sem.reduce((a,s)=>a+s.sks,0);
+const sks=m=>m.sem.reduce((a,s)=>a+s.sks,0);
+const hadir=m=>Math.round(m.mk.reduce((a,c)=>a+c.h,0)/m.mk.length);
+const proy=m=>{const sisa=C-sks(m),kap=m.sisaSem*24;return{sisa,kap,late:sisa>kap,est:(2026+Math.ceil(sisa/24)/2-(m.ke%2?0:0)).toFixed(0)}};
+function risks(m){const r=[];m.mk.filter(c=>c.h<75).forEach(c=>r.push({j:'Kehadiran rendah',p:c.n+' ('+c.h+'%)',rek:'Prioritaskan hadir di '+c.n+'; batas minimum 75%.'}));
+ const n=m.sem.length;if(n>1&&m.sem[n-1].ips<m.sem[n-2].ips)r.push({j:'Nilai turun',p:'IPS turun dari '+f(m.sem[n-2].ips)+' ke '+f(m.sem[n-1].ips),rek:'Evaluasi cara belajar, ikuti konsultasi dengan Dosen PA.'});
+ const p=proy(m);if(p.late)r.push({j:'Potensi telat lulus',p:'SKS tersisa '+p.sisa+' > kapasitas '+p.kap,rek:'Rencanakan KRS lebih padat atau semester pendek.'});return r}
+const bd=(t,c)=>`<span class="bd ${c}">${t}</span>`;
+const cst=s=>s==='disetujui'?bd('Disetujui','ok'):s==='dicabut'?bd('Dicabut','no'):bd('Menunggu','wt');
+function setRole(r){role=r;me=null;scr='login';err='';render()}
+async function login(){
+ if(!CFG)return render();
+ const {error}=await sb.auth.signInWithPassword({email:toEmail($('u').value.trim()),password:$('p').value});
+ if(error){err='Kredensial tidak valid. Silakan coba lagi.';return render()}
+ await loadAll();if(!me){err='Profil akun tidak ditemukan ('+window.pErr+').';return render()}
+ if(me.r!==role){await sb.auth.signOut();me=null;err='Akun ini bukan akun '+({mhs:'Mahasiswa',dosen:'Dosen',ortu:'Orang Tua'})[role]+'.';return render()}
+ err='';sub='home';sel=null;scr=startScr();render()}
+async function logout(){await sb.auth.signOut();me=null;db={users:[],mhs:{},relasi:[],bim:[],kelas:[],sync:'-'};scr='login';err='';render()}
+async function reg(){const n=$('rn').value.trim(),u=$('ru').value.trim().toLowerCase(),p=$('rp').value,nim=$('rnim').value.trim();
+ if(!n||!/^[a-z0-9._-]{3,}$/.test(u)||p.length<6||!nim){err='Lengkapi semua kolom (username huruf/angka min. 3 karakter, kata sandi min. 6).';return render()}
+ const {data:ada}=await sb.rpc('cek_nim',{p_nim:nim});if(!ada){err='NIM mahasiswa tidak ditemukan.';return render()}
+ const {error}=await sb.auth.signUp({email:toEmail(u),password:p,options:{data:{nama:n,nim,hubungan:'Orang tua/wali'}}});
+ if(error){err=/registered/i.test(error.message)?'Username sudah dipakai.':error.message;return render()}
+ await sb.auth.signOut();err='';scr='regok';render()}
+async function consent(i,st){const {error}=await sb.from('relasi_wali').update({status_persetujuan:st}).eq('id',db.relasi[i].id);if(error)alert(error.message);await loadAll();render()}
+async function doSync(){await sb.rpc('sinkron_demo');await loadAll();render()}
+function go(s){scr=s;err='';ok='';render()}
+function pick(n){sel=n;sub='home';scr='sv';render()}
+function cari(){const n=$('cn').value.trim();if(db.mhs[n])return pick(n);err='Akses ditolak: NIM bukan mahasiswa bimbingan Anda.';render()}
+async function mkJadwal(){const n=sel,t=$('bt').value,tp=$('bp').value.trim()||'Konsultasi akademik';
+ if(!t){err='Pilih tanggal dan waktu.';return render()}
+ if(db.bim.some(b=>b.t===t&&!['ditolak','selesai'].includes(b.st))){err='Jadwal bentrok. Pilih waktu lain.';return render()}
+ const {error}=await sb.from('bimbingan').insert({mahasiswa_id:db.mhs[n].id,dosen_id:me.id,jadwal:new Date(t).toISOString(),topik:tp,status:'menunggu'});
+ if(error){err=error.code==='23505'?'Jadwal bentrok. Pilih waktu lain.':error.message;return render()}
+ await loadAll();err='';ok='Jadwal tersimpan; mahasiswa diberi pemberitahuan.';render()}
+async function bs(id,st){await sb.rpc('respon_bimbingan',{p_id:id,p_status:st});await loadAll();render()}
+async function catat(id){const v=$('c'+id).value.trim();if(!v)return;const {error}=await sb.from('bimbingan').update({catatan:v,status:'selesai'}).eq('id',id);if(error)alert(error.message);await loadAll();render()}
+const setNav=a=>{$('nav').innerHTML=a.map(([l,s,on])=>`<button class="${on?'on':''}" onclick="${s}">${l}</button>`).join('')};
+const subnav=(m)=>`<div class="chips">${[['home','Dashboard'],['mk','Mata Kuliah'],['proy','Proyeksi'],['notif','Notifikasi'+(risks(m).length?' ('+risks(m).length+')':'')]].map(([k,l])=>`<button class="${sub===k?'on':''}" onclick="sub='${k}';render()">${l}</button>`).join('')}</div>`;
+function sview(n,forMhs){const m=db.mhs[n],p=proy(m),R=risks(m),B=db.bim.filter(b=>b.nim===n&&b.st==='selesai');
+ if(sub==='home')return `<div class="row"><h2>${forMhs?'Dashboard':m.nama}</h2>${R.length?bd(R.length+' risiko','no'):bd('Aman','ok')}</div>
+ <div class="stats"><div class="stat"><b>${f(m.sem[m.sem.length-1].ips)}</b><span>IPS terakhir</span></div><div class="stat"><b>${f(ipk(m))}</b><span>IPK</span></div><div class="stat"><b>${sks(m)}</b><span>Total SKS</span></div><div class="stat"><b>${hadir(m)}%</b><span>Kehadiran</span></div></div>
+ <div class="card"><h3>Tren IPS</h3><div class="hist">${m.sem.map((s,i)=>`<div style="height:${s.ips/4*100}%">${f(s.ips)}</div>`).join('')}</div></div>
+ <h3>Timeline semester</h3><div class="tl">${m.sem.map((s,i)=>`<div><b>Semester ${i+1}</b> · IPS ${f(s.ips)} · ${s.sks} SKS</div>`).join('')}<div><b>Semester ${m.ke} (berjalan)</b> · kehadiran ${hadir(m)}%</div>${B.map(b=>`<div><b>Bimbingan</b> · ${b.t.replace('T',' ')}<br><span style="color:var(--mut);font-size:12px">${b.cat}</span></div>`).join('')}</div>`;
+ if(sub==='mk')return `<h2>Mata Kuliah Semester ${m.ke}</h2>`+m.mk.map(c=>`<div class="card"><div class="row"><b>${c.n}</b>${bd(c.h+'%',c.h<75?'no':'ok')}</div><p>Kehadiran</p><div class="bar"><i style="width:${c.h}%;background:${c.h<75?'var(--bad)':'var(--ok)'}"></i></div><p style="margin-top:8px">Tugas ${c.t}/${c.tt} selesai · Nilai berjalan <b style="color:var(--tx)">${c.nilai}</b></p><div class="bar"><i style="width:${c.t/c.tt*100}%;background:var(--gold)"></i></div></div>`).join('');
+ if(sub==='proy')return `<h2>Proyeksi Kelulusan</h2><div class="card cen"><b style="font-size:34px;color:${p.late?'var(--bad)':'var(--ok)'}">${p.late?'Berpotensi terlambat':'Tepat waktu'}</b></div>
+ <div class="card"><div class="row"><h3>SKS ditempuh</h3><b>${sks(m)} / ${C}</b></div><div class="bar"><i style="width:${sks(m)/C*100}%"></i></div></div>
+ <div class="card"><div class="row"><h3>SKS tersisa</h3><b>${p.sisa}</b></div><div class="row" style="margin-top:8px"><h3>Sisa masa studi</h3><b>${m.sisaSem} semester</b></div><div class="row" style="margin-top:8px"><h3>Kapasitas (24 SKS/smt)</h3><b>${p.kap} SKS</b></div></div>
+ <p>Proyeksi = SKS tersisa dibandingkan kapasitas sisa masa studi. ${p.late?'Alert risiko dikirim ke mahasiswa dan Dosen PA.':''}</p>`;
+ return `<h2>Notifikasi Risiko</h2>`+(R.length?R.map(r=>`<div class="card"><div class="row">${bd(r.j,'no')}</div><p style="color:var(--tx);margin:8px 0 4px">${r.p}</p>${forMhs?`<p><b style="color:var(--gold)">Rekomendasi:</b> ${r.rek}</p>`:''}</div>`).join(''):`<div class="card"><p>Tidak ada indikasi risiko. Pertahankan!</p></div>`)+(forMhs?'':'<p>Rekomendasi perbaikan hanya dikirim ke mahasiswa.</p>')}
+function render(){
+ $('roles').innerHTML=[['mhs','Mahasiswa'],['dosen','Dosen'],['ortu','Orang Tua']].map(([k,l])=>`<button class="${role===k?'on':''}" onclick="setRole('${k}')">${l}</button>`).join('');
+ const e=`<div class="err">${err}</div>`;let h='';$('nav').innerHTML='';$('sub').textContent='PANTAUIN · UIN Jakarta';
+ if(!me){
+  if(scr==='reg')h=`<h2>Daftar Orang Tua/Wali</h2><p>Akses ke data anak aktif setelah mahasiswa menyetujui.</p><div><input id="rn" placeholder="Nama lengkap"><input id="ru" placeholder="Username"><input id="rp" type="password" placeholder="Kata sandi"><input id="rnim" placeholder="NIM anak"></div>${e}<button class="btn" onclick="reg()">DAFTAR</button><button class="link" onclick="go('login')">Kembali ke Login</button>`;
+  else if(scr==='regok')h=`<div class="cen"><div style="font-size:44px;color:var(--ok)">✓</div><h2>Akun berhasil dibuat</h2><p>Minta anak Anda menyetujui akses di menu Persetujuan Orang Tua, lalu login.</p><button class="btn" onclick="go('login')">Ke Halaman Login</button></div>`;
+  else h=`<div style="margin-top:16px"><h2>Masuk</h2><p>${role==='ortu'?'Orang tua/wali memakai akun sistem.':'Diverifikasi melalui akun E-Semesta (kata sandi tidak disimpan di sistem ini) — pada prototipe ini memakai Supabase Auth.'}</p></div><div><input id="u" placeholder="Username / NIM"><input id="p" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')login()"></div>${e}<button class="btn" onclick="login()">LOGIN</button>${role==='ortu'?`<button class="link" onclick="go('reg')">Belum punya akun? Registrasi</button>`:''}`;
+ }else if(role==='mhs'){
+  const n=me.u,m=db.mhs[n];$('sub').textContent='Mahasiswa · '+m.nama;
+  const tabs=[['Beranda','home'],['Matkul','mk'],['Proyeksi','proy'],['Notif'+(risks(m).length?'•':''),'notif']];
+  if(scr==='s')h=sview(n,true);
+  else if(scr==='menu')h=`<h2>Menu</h2><button class="mi" onclick="go('bim')">Bimbingan Akademik <span>›</span></button><button class="mi" onclick="go('izin')">Persetujuan Orang Tua <span>›</span></button><button class="mi" onclick="go('sync')">Status Sinkron E-Semesta <span>›</span></button><button class="mi" onclick="go('prof')">Profil <span>›</span></button>`;
+  else if(scr==='bim'){const L=db.bim.filter(b=>b.nim===n);h=`<h2>Bimbingan</h2>`+(L.length?L.map(b=>`<div class="card"><div class="row"><b>${b.t.replace('T',' ')}</b>${bd(b.st,b.st==='ditolak'?'no':b.st==='menunggu'?'wt':'ok')}</div><p>${b.tp}</p>${b.cat?`<p style="margin-top:6px">Catatan: ${b.cat}</p>`:''}${b.st==='menunggu'?`<div class="row" style="margin-top:10px"><button class="btn m" onclick="bs(${b.id},'dikonfirmasi')">Konfirmasi</button><button class="btn m x" onclick="bs(${b.id},'ditolak')">Tolak</button></div>`:''}</div>`).join(''):'<div class="card"><p>Belum ada jadwal bimbingan dari Dosen PA.</p></div>')}
+  else if(scr==='izin'){const L=db.relasi.map((r,i)=>[r,i]).filter(([r])=>r.nim===n);h=`<h2>Persetujuan Orang Tua</h2><p>Orang tua hanya melihat ringkasan IPS, IPK, dan kehadiran agregat jika Anda setuju.</p>`+(L.length?L.map(([r,i])=>{const o=db.users.find(x=>x.u===r.ortu);return `<div class="card"><div class="row"><div><b>${o.name}</b><p>@${o.un||''}</p></div>${cst(r.st)}</div><div style="margin-top:10px">${r.st==='disetujui'?`<button class="btn m x" onclick="consent(${i},'dicabut')">Cabut persetujuan</button>`:`<button class="btn m" onclick="consent(${i},'disetujui')">Berikan persetujuan</button>`}</div></div>`}).join(''):'<div class="card"><p>Belum ada orang tua/wali terhubung, jadi belum ada akun yang dapat diberi akses.</p></div>')}
+  else if(scr==='sync')h=`<h2>Sinkronisasi</h2><div class="cen card"><div style="font-size:36px">⟳</div><p>Terakhir sinkron:<br><b style="color:var(--tx)">${db.sync}</b></p><button class="btn" onclick="doSync()">Sinkron sekarang</button><p>Data bersumber dari E-Semesta (hanya baca).</p></div>`;
+  else if(scr==='prof')h=`<h2>Profil</h2><div class="card"><div class="row"><h3>Nama</h3><span>${m.nama}</span></div></div><div class="card"><div class="row"><h3>NIM</h3><span>${n}</span></div></div><div class="card"><div class="row"><h3>Prodi</h3><span>Teknik Informatika</span></div></div><button class="btn" onclick="logout()">Keluar</button>`;
+  if(scr!=='s'&&scr!=='menu')h+=`<button class="link" onclick="go('menu')">‹ Kembali ke Menu</button>`;
+  setNav([...tabs.map(([l,s])=>[l,`sub='${s}';scr='s';render()`,scr==='s'&&sub===s]),['Menu',"go('menu')",scr!=='s']]);
+ }else if(role==='dosen'){
+  $('sub').textContent='Dosen PA & Pengampu MK · '+me.name;
+  const mine=Object.entries(db.mhs).filter(([,m])=>m.pa===me.u);
+  if(scr==='list')h=`<h2>Mahasiswa Bimbingan</h2>`+mine.map(([n,m])=>{const R=risks(m);return `<button class="mi" onclick="pick('${n}')"><span style="text-align:left">${m.nama}<br><span style="font-size:11px;color:var(--mut)">IPK ${f(ipk(m))} · hadir ${hadir(m)}%</span></span>${R.length?bd(R.length+' risiko','no'):bd('Aman','ok')}</button>`}).join('')+`<div class="card"><h3>Buka mahasiswa lain (cek hak akses)</h3><input id="cn" placeholder="NIM"><button class="btn s" style="margin-top:8px" onclick="cari()">Cari</button>${e}</div>`;
+  else if(scr==='sv'){const m=db.mhs[sel];h=`<button class="link" style="text-align:left" onclick="go('list')">‹ Daftar mahasiswa</button>${subnav(m)}${sview(sel,false)}`}
+  else if(scr==='bimd'){const R=mine.filter(([,m])=>risks(m).length);h=`<h2>Kelola Bimbingan</h2><p>Mahasiswa berisiko diprioritaskan.</p><div class="card"><select id="bs">${[...R,...mine.filter(x=>!R.includes(x))].map(([n,m])=>`<option value="${n}" ${n===sel?'selected':''}>${m.nama}${risks(m).length?' ⚠':''}</option>`).join('')}</select><input id="bt" type="datetime-local"><input id="bp" placeholder="Topik bimbingan"><button class="btn" style="margin-top:8px" onclick="sel=$('bs').value;mkJadwal()">Kirim jadwal</button>${e}<div style="color:var(--ok);font-size:12px">${ok}</div></div>`+db.bim.filter(b=>db.mhs[b.nim].pa===me.u).map(b=>`<div class="card"><div class="row"><b>${db.mhs[b.nim].nama}</b>${bd(b.st,b.st==='ditolak'?'no':b.st==='menunggu'?'wt':'ok')}</div><p>${b.t.replace('T',' ')} · ${b.tp}</p>${b.st==='dikonfirmasi'?`<input id="c${b.id}" placeholder="Catatan hasil & tindak lanjut"><button class="btn m" style="margin-top:8px" onclick="catat(${b.id})">Simpan catatan</button>`:''}${b.st==='ditolak'?`<p style="margin-top:6px">Ditolak mahasiswa — buat jadwal baru.</p>`:''}${b.cat?`<p>Catatan: ${b.cat}</p>`:''}</div>`).join('')}
+  else if(scr==='stat'){const k=db.kelas[kel],mx=Math.max(...k.d);h=`<h2>Statistik Kelas</h2><select onchange="kel=this.value;render()">${db.kelas.map((x,i)=>`<option value="${i}" ${i==kel?'selected':''}>${x.n}</option>`).join('')}</select><div class="stats"><div class="stat"><b>${k.avg.toString().replace('.',',')}</b><span>Rata-rata nilai</span></div><div class="stat"><b>${k.h}%</b><span>Rata-rata kehadiran</span></div></div><div class="card"><h3>Distribusi nilai (${k.jml} mahasiswa)</h3><div class="hist">${k.d.map(v=>`<div style="height:${v/mx*100}%">${v}</div>`).join('')}</div><div class="row" style="font-size:11px;color:var(--mut);margin-top:4px">${['E','D','C','B','A'].map(x=>`<span style="flex:1;text-align:center">${x}</span>`).join('')}</div></div><p>Sinkron terakhir: ${db.sync}</p><button class="btn s" onclick="doSync()">Sinkron data kelas</button>`}
+  else if(scr==='dm')h=`<h2>Menu</h2><div class="card"><div class="row"><h3>Sinkron</h3><span style="font-size:12px">${db.sync}</span></div></div><button class="btn s" onclick="doSync()">Sinkron sekarang</button><button class="btn" onclick="logout()">Keluar</button>`;
+  setNav([['Mahasiswa',"go('list')",['list','sv'].includes(scr)],['Bimbingan',"go('bimd')",scr==='bimd'],['Statistik',"go('stat')",scr==='stat'],['Menu',"go('dm')",scr==='dm']]);
+ }else{
+  const rel=db.relasi.find(r=>r.ortu===me.u),m=rel&&db.mhs[rel.nim],o=rel&&rel.st==='disetujui'&&m;$('sub').textContent='Orang Tua/Wali · mode baca saja';
+  if(scr==='home')h=`<h2>Halo, ${me.name}</h2><p>Pantau perkembangan akademik anak Anda.</p><div class="card"><div class="row"><h3>Progres Anak</h3>${rel?cst(rel.st):''}</div><p style="margin:8px 0;color:var(--tx)">${rel?rel.nama:'Belum terhubung'}</p>${o?`<p>IPS ${f(m.sem[m.sem.length-1].ips)} · IPK ${f(ipk(m))} · Kehadiran ${hadir(m)}%</p>`:''}</div><button class="btn" onclick="go('anak')">Lihat Progres</button>`;
+  else if(scr==='anak'||scr==='det'){
+   if(!o)h=`<div class="cen"><div style="font-size:44px;color:var(--gold)">!</div><h2>Akses belum tersedia</h2><p>${rel&&rel.st==='dicabut'?'Mahasiswa telah mencabut persetujuan.':'Persetujuan dari mahasiswa belum ada.'} Minta anak Anda memberi persetujuan.</p></div>`;
+   else if(scr==='anak')h=`<div class="row"><h2>Progres Anak</h2>${bd('Disetujui mahasiswa','ok')}</div><p>${m.nama}</p><div class="stats"><div class="stat"><b>${f(m.sem[m.sem.length-1].ips)}</b><span>IPS</span></div><div class="stat"><b>${f(ipk(m))}</b><span>IPK</span></div></div><div class="card"><div class="row"><h3>Kehadiran agregat</h3><b>${hadir(m)}%</b></div><div class="bar"><i style="width:${hadir(m)}%"></i></div></div><button class="btn s" onclick="go('det')">Detail Ringkasan</button><p>Hanya ringkasan; rincian nilai per mata kuliah tidak ditampilkan.</p>`;
+   else h=`<h2>Detail Ringkasan</h2><div class="card"><h3>Tren IPS per semester</h3><div class="hist">${m.sem.map(s=>`<div style="height:${s.ips/4*100}%">${f(s.ips)}</div>`).join('')}</div></div><div class="card"><div class="row"><h3>Total SKS</h3><b>${sks(m)}</b></div></div><button class="link" onclick="go('anak')">‹ Kembali</button>`}
+  else h=`<h2>Profil</h2><div class="card"><div class="row"><h3>Nama</h3><span>${me.name}</span></div></div><div class="card"><div class="row"><h3>Hubungan</h3><span>${me.rel}</span></div></div><button class="btn" onclick="logout()">Keluar</button>`;
+  setNav([['Beranda',"go('home')",scr==='home'],['Progres Anak',"go('anak')",['anak','det'].includes(scr)],['Profil',"go('prof')",scr==='prof']]);
+ }
+ $('body').innerHTML=h;$('ph').classList.toggle('nonav',!$('nav').innerHTML);
+}
+init();
+</script></body></html>
